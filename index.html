@@ -4,321 +4,137 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Happy Birthday Yasmine 🎂</title>
+
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Pacifico&display=swap');
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg,#ffd6e8,#c9b8f8);
+  font-family: 'Quicksand', sans-serif;
+  overflow: hidden;
+}
 
-  body {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #ffd6e8 0%, #ffb3d1 30%, #e8b4f8 60%, #c9b8f8 100%);
-    background-attachment: fixed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Quicksand', sans-serif;
-    overflow: hidden;
-    position: relative;
-  }
+.card {
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  border-radius: 25px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+}
 
-  /* Floating petals background */
-  .petal {
-    position: fixed;
-    pointer-events: none;
-    font-size: 18px;
-    animation: petalFall linear infinite;
-    opacity: 0.6;
-    z-index: 0;
-  }
-  @keyframes petalFall {
-    0%   { transform: translateY(-40px) rotate(0deg) translateX(0); opacity: 0.8; }
-    100% { transform: translateY(110vh) rotate(720deg) translateX(30px); opacity: 0; }
-  }
+.sprite img {
+  width: 150px;
+  animation: float 3s ease-in-out infinite;
+}
 
-  /* ── CARD ── */
-  .card {
-    background: rgba(255,255,255,0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 28px;
-    padding: 36px 32px 32px;
-    width: min(92vw, 420px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 18px;
-    box-shadow: 0 20px 60px rgba(200,100,180,0.25), 0 4px 16px rgba(0,0,0,0.08);
-    position: relative;
-    z-index: 10;
-    text-align: center;
-  }
+@keyframes float {
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
+}
 
-  /* Sprite container */
-  .sprite-wrap {
-    width: 150px;
-    height: 150px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    animation: floatChar 3s ease-in-out infinite;
-  }
-  .sprite-wrap img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-  }
+h1 {
+  font-family: 'Pacifico';
+  color: #c0447a;
+}
 
-  @keyframes floatChar {
-    0%, 100% { transform: translateY(0); }
-    50%       { transform: translateY(-10px); }
-  }
+p {
+  color: #7a4070;
+}
 
-  /* ── SCREENS ── */
-  .screen { display: none; flex-direction: column; align-items: center; gap: 18px; width: 100%; }
-  .screen.active { display: flex; }
+.buttons {
+  margin-top: 20px;
+  position: relative;
+  height: 120px;
+}
 
-  .title {
-    font-family: 'Pacifico', cursive;
-    font-size: clamp(20px, 5.5vw, 28px);
-    color: #c0447a;
-    line-height: 1.3;
-  }
-  .subtitle {
-    font-size: clamp(13px, 3.5vw, 16px);
-    color: #7a4070;
-    font-weight: 600;
-    line-height: 1.6;
-  }
+button {
+  border: none;
+  border-radius: 50px;
+  padding: 12px 30px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-  /* Buttons */
-  .btn-yes {
-    background: linear-gradient(135deg, #f06292, #e91e8c);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    padding: 14px 48px;
-    font-size: clamp(15px, 4vw, 18px);
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(233,30,140,0.4);
-    transition: transform 0.15s, box-shadow 0.15s;
-    letter-spacing: 0.5px;
-  }
-  .btn-yes:hover { transform: scale(1.07); box-shadow: 0 8px 28px rgba(233,30,140,0.5); }
-  .btn-yes:active { transform: scale(0.97); }
+#yes {
+  background: #e91e8c;
+  color: white;
+}
 
-  .btn-no {
-    background: rgba(200,180,220,0.6);
-    color: #7a4070;
-    border: 2px solid rgba(180,140,200,0.5);
-    border-radius: 50px;
-    padding: 10px 28px;
-    font-size: clamp(12px, 3.2vw, 15px);
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 600;
-    cursor: pointer;
-    position: absolute; /* Changed to absolute for reliable bouncing inside container */
-    transition: all 0.1s ease;
-    z-index: 999;
-    white-space: nowrap;
-  }
+#no {
+  position: absolute;
+  background: #ddd;
+}
 
-  .btns-row {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    width: 100%;
-    min-height: 120px; /* Gives the No button space to move safely */
-  }
-
-  /* ── Final screen ── */
-  .confetti-area { font-size: 32px; letter-spacing: 6px; }
-  .final-title {
-    font-family: 'Pacifico', cursive;
-    font-size: clamp(22px, 6vw, 32px);
-    color: #c0447a;
-  }
-  .final-msg {
-    font-size: clamp(13px, 3.5vw, 15px);
-    color: #7a4070;
-    font-weight: 600;
-    line-height: 1.9;
-  }
-  .signature {
-    font-size: clamp(11px, 3vw, 13px);
-    color: #b06090;
-    margin-top: 4px;
-    font-style: italic;
-  }
-
-  .burst-heart {
-    position: fixed;
-    font-size: 24px;
-    pointer-events: none;
-    z-index: 9999;
-    animation: burstUp ease-out forwards;
-  }
-  @keyframes burstUp {
-    0%   { opacity: 1; transform: translate(0,0) scale(1); }
-    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.5); }
-  }
-
-  .no-msg {
-    font-size: 12px;
-    color: #c06080;
-    font-style: italic;
-    min-height: 18px;
-    transition: opacity 0.2s;
-    font-weight: bold;
-  }
+/* FINAL SCREEN */
+#final {
+  display: none;
+}
 </style>
 </head>
+
 <body>
 
 <div class="card">
 
-  <div class="screen active" id="screen1">
-    <div class="sprite-wrap">
-      <img src="1000048706.png" alt="Character"/>
-    </div>
-    
-    <h1 class="title">Happy Birthday, Yasmine! 🌸</h1>
-    <p class="subtitle">I have a special birthday gift for you... but first, you have to say yes to a question! 😊</p>
-    
-    <div class="no-msg" id="noMsg"></div>
-
-    <div class="btns-row" id="btnsRow">
-      <button class="btn-yes" id="btnYes">YES! ✨</button>
-      <button class="btn-no" id="btnNo">No u</button>
-    </div>
+<div id="screen1">
+  <div class="sprite">
+    <!-- YOUR CHARACTER IMAGE -->
+    <img src="1000048714.png" alt="character">
   </div>
 
-  <div class="screen" id="screen2">
-    <div class="confetti-area">🎉💖✨🍰🌸</div>
-    <h1 class="final-title">Yayyy! 🥰</h1>
-    <p class="final-msg">
-      Your birthday gift from me is... <strong>a date!</strong> ☕✨<br>
-      Pick a day, and let's go celebrate you properly.
-    </p>
-    <div class="signature">Can't wait! See you soon. ✨</div>
+  <h1>Happy Birthday Yasmine 🌸</h1>
+  <p>I have a gift for you… but first say YES 😏</p>
+
+  <div class="buttons">
+    <button id="yes">YES ✨</button>
+    <button id="no">No</button>
   </div>
+</div>
+
+<div id="final">
+  <h1>Yayyy 🥰</h1>
+  <p>Your gift is… a date ☕✨</p>
+</div>
 
 </div>
 
 <script>
-  const btnYes = document.getElementById('btnYes');
-  const btnNo = document.getElementById('btnNo');
-  const screen1 = document.getElementById('screen1');
-  const screen2 = document.getElementById('screen2');
-  const noMsg = document.getElementById('noMsg');
-  const btnsRow = document.getElementById('btnsRow');
+const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
+const screen1 = document.getElementById("screen1");
+const final = document.getElementById("final");
 
-  const responses = [
-    "Error 404: Option not found 😉",
-    "Nice try, hit the big pink button!",
-    "Are you sure? Try again!",
-    "Nu-uh, click YES!",
-    "The 'No' button is broken, sad times."
-  ];
-  let noCount = 0;
+// Move NO button randomly
+function moveNo() {
+  const parent = noBtn.parentElement;
+  const maxX = parent.clientWidth - noBtn.offsetWidth;
+  const maxY = parent.clientHeight - noBtn.offsetHeight;
 
-  // Set initial position safely inside the card layout
-  function initialPosition() {
-    btnNo.style.left = "60%";
-    btnNo.style.top = "40px";
-  }
-  initialPosition();
-  spawnPetals();
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
 
-  // Bulletproof jump function
-  function teleportNo(e) {
-    if(e) e.preventDefault();
-    
-    // Limits movement inside the button row zone so it doesn't leave the view entirely
-    const rowWidth = btnsRow.clientWidth;
-    const rowHeight = btnsRow.clientHeight;
-    
-    // Calculate safe boundaries
-    const maxX = rowWidth - btnNo.offsetWidth;
-    const maxY = rowHeight - btnNo.offsetHeight;
-    
-    // Pick random spots within the row
-    const randomX = Math.floor(Math.random() * maxX);
-    const randomY = Math.floor(Math.random() * maxY);
-    
-    btnNo.style.left = randomX + 'px';
-    btnNo.style.top = randomY + 'px';
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
 
-    // Update tease text
-    noMsg.style.opacity = 0;
-    setTimeout(() => {
-      noMsg.innerText = responses[noCount % responses.length];
-      noMsg.style.opacity = 1;
-      noCount++;
-    }, 50);
-  }
+// Works on PC + phone
+noBtn.addEventListener("mouseover", moveNo);
+noBtn.addEventListener("touchstart", moveNo);
+noBtn.addEventListener("click", moveNo);
 
-  // Event Listeners for EVERY possible interaction
-  btnNo.addEventListener('mouseover', teleportNo); // For desktop mouse hover
-  btnNo.addEventListener('mouseenter', teleportNo); // Back-up hover rule
-  btnNo.addEventListener('touchstart', teleportNo); // Instant mobile finger tap detection
-  btnNo.addEventListener('click', teleportNo); // Ultimate click fallback
-
-  // Action on YES
-  btnYes.addEventListener('click', () => {
-    btnNo.style.display = 'none';
-    screen1.classList.remove('active');
-    screen2.classList.add('active');
-    
-    for(let i=0; i<30; i++) {
-      setTimeout(createHeart, i * 80);
-    }
-  });
-
-  function createHeart() {
-    const heart = document.createElement('div');
-    heart.className = 'burst-heart';
-    heart.innerText = ['💖','🌸','✨','❤️','🥰'][Math.floor(Math.random()*5)];
-    const startX = window.innerWidth / 2;
-    const startY = window.innerHeight / 2;
-    
-    heart.style.left = startX + 'px';
-    heart.style.top = startY + 'px';
-    
-    const tx = (Math.random() - 0.5) * 350;
-    const ty = (Math.random() - 0.6) * 400;
-    
-    heart.style.setProperty('--tx', tx + 'px');
-    heart.style.setProperty('--ty', ty + 'px');
-    
-    const duration = 0.8 + Math.random() * 0.8;
-    heart.style.animationDuration = duration + 's';
-    
-    document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), duration * 1000);
-  }
-
-  function spawnPetals() {
-    const symbols = ['🌸', '✨', '💮', '💖'];
-    setInterval(() => {
-      if(document.hidden) return;
-      const petal = document.createElement('div');
-      petal.className = 'petal';
-      petal.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-      petal.style.left = Math.random() * 100 + 'vw';
-      
-      const duration = 6 + Math.random() * 6;
-      petal.style.animationDuration = duration + 's';
-      petal.style.fontSize = (12 + Math.random() * 14) + 'px';
-      
-      document.body.appendChild(petal);
-      setTimeout(() => petal.remove(), duration * 1000);
-    }, 450);
-  }
+// YES button
+yesBtn.onclick = () => {
+  screen1.style.display = "none";
+  final.style.display = "block";
+};
 </script>
 
 </body>
