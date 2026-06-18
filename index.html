@@ -51,10 +51,9 @@
     position: relative;
     z-index: 10;
     text-align: center;
-    transition: transform 0.3s ease;
   }
 
-  /* Sprite container — shows the custom character */
+  /* Sprite container */
   .sprite-wrap {
     width: 150px;
     height: 150px;
@@ -62,6 +61,7 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    animation: floatChar 3s ease-in-out infinite;
   }
   .sprite-wrap img {
     max-width: 100%;
@@ -69,10 +69,6 @@
     object-fit: contain;
   }
 
-  /* floating animation on sprite */
-  .sprite-wrap {
-    animation: floatChar 3s ease-in-out infinite;
-  }
   @keyframes floatChar {
     0%, 100% { transform: translateY(0); }
     50%       { transform: translateY(-10px); }
@@ -82,7 +78,6 @@
   .screen { display: none; flex-direction: column; align-items: center; gap: 18px; width: 100%; }
   .screen.active { display: flex; }
 
-  /* Title text */
   .title {
     font-family: 'Pacifico', cursive;
     font-size: clamp(20px, 5.5vw, 28px);
@@ -124,8 +119,8 @@
     font-family: 'Quicksand', sans-serif;
     font-weight: 600;
     cursor: pointer;
-    position: fixed;
-    transition: none;
+    position: absolute; /* Changed to absolute for reliable bouncing inside container */
+    transition: all 0.1s ease;
     z-index: 999;
     white-space: nowrap;
   }
@@ -135,12 +130,12 @@
     gap: 16px;
     align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
     position: relative;
     width: 100%;
+    min-height: 120px; /* Gives the No button space to move safely */
   }
 
-  /* ── Final / YES screen ── */
+  /* ── Final screen ── */
   .confetti-area { font-size: 32px; letter-spacing: 6px; }
   .final-title {
     font-family: 'Pacifico', cursive;
@@ -160,7 +155,6 @@
     font-style: italic;
   }
 
-  /* heart burst animation */
   .burst-heart {
     position: fixed;
     font-size: 24px;
@@ -173,13 +167,13 @@
     100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.5); }
   }
 
-  /* no-count message */
   .no-msg {
-    font-size: 11px;
+    font-size: 12px;
     color: #c06080;
     font-style: italic;
-    min-height: 16px;
-    transition: opacity 0.3s;
+    min-height: 18px;
+    transition: opacity 0.2s;
+    font-weight: bold;
   }
 </style>
 </head>
@@ -187,7 +181,6 @@
 
 <div class="card">
 
-  <!-- SCREEN 1: The question -->
   <div class="screen active" id="screen1">
     <div class="sprite-wrap">
       <img src="1000048706.png" alt="Character"/>
@@ -198,13 +191,12 @@
     
     <div class="no-msg" id="noMsg"></div>
 
-    <div class="btns-row">
+    <div class="btns-row" id="btnsRow">
       <button class="btn-yes" id="btnYes">YES! ✨</button>
       <button class="btn-no" id="btnNo">No u</button>
     </div>
   </div>
 
-  <!-- SCREEN 2: The Gift Reveal -->
   <div class="screen" id="screen2">
     <div class="confetti-area">🎉💖✨🍰🌸</div>
     <h1 class="final-title">Yayyy! 🥰</h1>
@@ -218,14 +210,13 @@
 </div>
 
 <script>
-  // Elements
   const btnYes = document.getElementById('btnYes');
   const btnNo = document.getElementById('btnNo');
   const screen1 = document.getElementById('screen1');
   const screen2 = document.getElementById('screen2');
   const noMsg = document.getElementById('noMsg');
+  const btnsRow = document.getElementById('btnsRow');
 
-  // "No" button playful avoidance responses
   const responses = [
     "Error 404: Option not found 😉",
     "Nice try, hit the big pink button!",
@@ -235,85 +226,75 @@
   ];
   let noCount = 0;
 
-  // Initial setup for the Avoidance button placement
-  function positionNoButton() {
-    btnNo.style.position = 'fixed';
-    // Center initially under the yes button roughly
-    const yesRect = btnYes.getBoundingClientRect();
-    btnNo.style.left = (yesRect.left + (yesRect.width/2) - 45) + 'px';
-    btnNo.style.top = (yesRect.bottom + 25) + 'px';
+  // Set initial position safely inside the card layout
+  function initialPosition() {
+    btnNo.style.left = "60%";
+    btnNo.style.top = "40px";
   }
-  
-  // Wait for loading to place it safely
-  window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(positionNoButton, 200);
-    spawnPetals();
-  });
-  window.addEventListener('resize', positionNoButton);
+  initialPosition();
+  spawnPetals();
 
-  // Move the 'No' button on hover or click
-  function teleportNo() {
-    const pad = 80;
-    const maxX = window.innerWidth - btnNo.offsetWidth - pad;
-    const maxY = window.innerHeight - btnNo.offsetHeight - pad;
+  // Bulletproof jump function
+  function teleportNo(e) {
+    if(e) e.preventDefault();
     
-    const randomX = Math.max(pad, Math.floor(Math.random() * maxX));
-    const randomY = Math.max(pad, Math.floor(Math.random() * maxY));
+    // Limits movement inside the button row zone so it doesn't leave the view entirely
+    const rowWidth = btnsRow.clientWidth;
+    const rowHeight = btnsRow.clientHeight;
+    
+    // Calculate safe boundaries
+    const maxX = rowWidth - btnNo.offsetWidth;
+    const maxY = rowHeight - btnNo.offsetHeight;
+    
+    // Pick random spots within the row
+    const randomX = Math.floor(Math.random() * maxX);
+    const randomY = Math.floor(Math.random() * maxY);
     
     btnNo.style.left = randomX + 'px';
     btnNo.style.top = randomY + 'px';
 
-    // Cycle text hints
+    // Update tease text
     noMsg.style.opacity = 0;
     setTimeout(() => {
       noMsg.innerText = responses[noCount % responses.length];
       noMsg.style.opacity = 1;
       noCount++;
-    }, 100);
+    }, 50);
   }
 
-  btnNo.addEventListener('mouseover', teleportNo);
-  btnNo.addEventListener('click', (e) => {
-    e.preventDefault();
-    teleportNo();
-  });
+  // Event Listeners for EVERY possible interaction
+  btnNo.addEventListener('mouseover', teleportNo); // For desktop mouse hover
+  btnNo.addEventListener('mouseenter', teleportNo); // Back-up hover rule
+  btnNo.addEventListener('touchstart', teleportNo); // Instant mobile finger tap detection
+  btnNo.addEventListener('click', teleportNo); // Ultimate click fallback
 
   // Action on YES
   btnYes.addEventListener('click', () => {
-    // Clean up fixed "No" button
     btnNo.style.display = 'none';
-    
-    // Switch screens
     screen1.classList.remove('active');
     screen2.classList.add('active');
     
-    // Heart bursts
     for(let i=0; i<30; i++) {
       setTimeout(createHeart, i * 80);
     }
   });
 
-  // Cosmetic animations: Floating Hearts
   function createHeart() {
     const heart = document.createElement('div');
     heart.className = 'burst-heart';
     heart.innerText = ['💖','🌸','✨','❤️','🥰'][Math.floor(Math.random()*5)];
-    
-    // Center offset burst
     const startX = window.innerWidth / 2;
     const startY = window.innerHeight / 2;
     
     heart.style.left = startX + 'px';
     heart.style.top = startY + 'px';
     
-    // Random trajectories
     const tx = (Math.random() - 0.5) * 350;
     const ty = (Math.random() - 0.6) * 400;
     
     heart.style.setProperty('--tx', tx + 'px');
     heart.style.setProperty('--ty', ty + 'px');
     
-    // Randomize scale and timing duration
     const duration = 0.8 + Math.random() * 0.8;
     heart.style.animationDuration = duration + 's';
     
@@ -321,7 +302,6 @@
     setTimeout(() => heart.remove(), duration * 1000);
   }
 
-  // Petals backdrop generation
   function spawnPetals() {
     const symbols = ['🌸', '✨', '💮', '💖'];
     setInterval(() => {
